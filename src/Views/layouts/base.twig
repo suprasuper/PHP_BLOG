@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon premier blog PHP !{% endblock %}</title>
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    {% for css_file in css_files %}
+        <link rel="stylesheet" href="{{ css_file }}">
+    {% endfor %}
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    {% include "partials/navbar.twig" %}  {# Navigation réutilisable #}
+
+    <main class="container mx-auto mt-8">
+        {% block content %}{% endblock %}  {# Contenu spécifique de chaque page #}
+    </main>
+
+    {% include "partials/footer.twig" %}  {# Footer réutilisable #}
+
+</body>
+</html>
