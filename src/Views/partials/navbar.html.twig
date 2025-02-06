@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('home') }}">Mon Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ path('home') }}">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('blog') }}">Blog</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if app.user %}
+                    <li class="nav-item"><a class="nav-link" href="{{ path('dashboard') }}">👤 {{ app.user.username }}</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="{{ path('logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="{{ path('login') }}">Connexion</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
