@@ -1,17 +1,21 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Controllers\PostController;
+use Core\Router;
+use Controllers\HomeController;
+use Core\ErrorHandling\ErrorHandler;
 
-// Charger la config des assets
-$assets = require __DIR__ . '/../config/assets.php';
+// Activer le gestionnaire d'erreurs
+ErrorHandler::register();
 
-// Définir Twig
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../src/Views');
-$twig = new \Twig\Environment($loader, ['cache' => false]);
+// Initialiser le router
+$router = new Router();
 
-// Passer les CSS et JS à toutes les vues Twig
-echo $twig->render('home.twig', [
-    'css_files' => $assets['css'],
-    
-]);
+// Définir la route pour la page d'accueil
+$router->get('/', function () {
+    $controller = new HomeController();
+    $controller->index(); // Affiche la page d'accueil
+});
+
+// Lancer le dispatching des routes
+$router->dispatch();

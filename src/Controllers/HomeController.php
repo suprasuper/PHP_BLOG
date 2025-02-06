@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Controllers;
+namespace Controllers;
 
-use Core\Controller;
+use Core\View;
 
-class HomeController extends Controller
+class HomeController
 {
     public function index()
     {
-        $this->render('home/index', [
-            'title' => 'Bienvenue sur mon blog',
-            'message' => 'Découvrez mes articles et projets !'
+        // Afficher la vue de la page d'accueil
+        View::render('home/home.twig', [
+            'page_title' => 'Accueil - Mon Blog',
+            'welcome_message' => 'Bienvenue sur mon blog !',
         ]);
     }
 }
