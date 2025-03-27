@@ -34,6 +34,15 @@ class ComposerStaticInit19b0974c8ed31292a8cd7bea470e26f5
             'Respect\\Validation\\' => 19,
             'Respect\\Stringifier\\' => 20,
         ),
+        'M' => 
+        array (
+            'Models\\' => 7,
+        ),
+        'C' => 
+        array (
+            'Core\\' => 5,
+            'Controllers\\' => 12,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -60,6 +69,18 @@ class ComposerStaticInit19b0974c8ed31292a8cd7bea470e26f5
         'Respect\\Stringifier\\' => 
         array (
             0 => __DIR__ . '/..' . '/respect/stringifier/src',
+        ),
+        'Models\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Models',
+        ),
+        'Core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/core',
+        ),
+        'Controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Controllers',
         ),
     );
 

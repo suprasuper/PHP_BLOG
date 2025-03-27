@@ -8,16 +8,19 @@
     {% for css_file in css_files %}
         <link rel="stylesheet" href="{{ css_file }}">
     {% endfor %}
+    {% for js_file in js_files %}
+        <script src="{{ js_file }}"></script>
+    {% endfor %}
 </head>
 <body class="bg-gray-100 text-gray-900">
 
-    {% include 'src/partials/navbar.html.twig' %}
+{% include 'partials/navbar.html.twig' %}
 
     <main class="container mx-auto mt-8">
         {% block content %}{% endblock %}  {# Contenu spécifique de chaque page #}
     </main>
 
-    {% include "partials/footer.twig" %}  {# Footer réutilisable #}
+    {# {% include "partials/footer.twig" %}  Footer réutilisable #}
 
 </body>
 </html>

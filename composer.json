@@ -3,5 +3,12 @@
         "twig/twig": "^3.19",
         "twbs/bootstrap": "^5.3",
         "respect/validation": "^2.4"
-    }
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "Controllers\\": "src/Controllers/",
+            "Models\\": "src/Models/"
+        }
+    }    
 }

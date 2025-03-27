@@ -8,14 +8,16 @@ use Core\ErrorHandling\ErrorHandler;
 // Activer le gestionnaire d'erreurs
 ErrorHandler::register();
 
-// Initialiser le router
+//Initialise router
 $router = new Router();
 
-// Définir la route pour la page d'accueil
-$router->get('/', function () {
-    $controller = new HomeController();
-    $controller->index(); // Affiche la page d'accueil
-});
+// Ajouter la route pour la page d'accueil
+$router->get('/', 'HomeController@index');
 
-// Lancer le dispatching des routes
+// Lancer le routeur
 $router->dispatch();
+
+
+
+
+

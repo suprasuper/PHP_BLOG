@@ -2,16 +2,22 @@
 
 namespace Controllers;
 
-use Core\View;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
-class HomeController
-{
-    public function index()
-    {
-        // Afficher la vue de la page d'accueil
-        View::render('home/home.twig', [
-            'page_title' => 'Accueil - Mon Blog',
-            'welcome_message' => 'Bienvenue sur mon blog !',
+class HomeController {
+    public function index() {
+        // Initialisation de Twig
+        $loader = new FilesystemLoader(__DIR__ . '/../../Views'); // Définit le dossier des templates
+        $twig = new Environment($loader);
+        $assets = require dirname(__DIR__, 2) . '/config/assets.php';
+
+        // Rendu du template "home/acceuil.html.twig"
+        echo $twig->render('home/acceuil.html.twig', [
+            'titre' => 'Bienvenue sur mon blog',
+            'message' => 'Ceci est ma première page avec Twig !',
+            'css_files' => $assets['css'], // Envoie les CSS à Twig
+            'js_files' => $assets['js'] // Envoie les JS à Twig
         ]);
     }
 }
