@@ -15,7 +15,7 @@ class HomeController {
         // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('home/acceuil.html.twig', [
             'titre' => 'Bienvenue sur mon blog',
-            'message' => 'Ceci est ma première page avec Twig !',
+            'welcome_message' => 'Bienvenu !',
             'css_files' => $assets['css'], // Envoie les CSS à Twig
             'js_files' => $assets['js'] // Envoie les JS à Twig
         ]);
