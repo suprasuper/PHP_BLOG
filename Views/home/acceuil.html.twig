@@ -3,12 +3,46 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h1 class="text-3xl font-bold">{{ welcome_message }}</h1>
-    <p class="text-lg mt-4">Découvrez mes derniers articles et projets.</p>
+<div class="container mt-5">
 
-    <div class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <p>Corps de ma page</p>
+    <!-- Section Présentation -->
+    <div class="text-center">
+        <img src="{{ asset('images/profil.jpg') }}" alt="Photo de profil" class="rounded-circle" width="150">
+        <h1 class="mt-3">{{ nom }} {{ prenom }}</h1>
+        <p class="lead">{{ accroche }}</p>
     </div>
+    <!-- Formulaire de contact -->
+    <div class="mt-5">
+        <h2>Contactez-moi</h2>
+        <form method="post" action="{{ path('contact') }}">
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom / Prénom</label>
+                <input type="text" class="form-control" id="nom" name="nom" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Lien vers le CV -->
+    <div class="mt-4">
+        <a href="{{ asset('documents/cv.pdf') }}" class="btn btn-outline-dark" target="_blank">Voir mon CV</a>
+    </div>
+
+    <!-- Liens vers les réseaux sociaux -->
+    <div class="mt-4 text-center">
+        <h4>Suivez-moi</h4>
+        <a href="https://github.com/tonprofil" class="btn btn-dark mx-2" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/tonprofil" class="btn btn-primary mx-2" target="_blank">LinkedIn</a>
+        <a href="https://twitter.com/tonprofil" class="btn btn-info mx-2" target="_blank">Twitter</a>
+    </div>
+
 </div>
 {% endblock %}
