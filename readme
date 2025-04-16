@@ -2,3 +2,29 @@ Dependences :
 - Bootstrap
 - Twig 
 - Respect/Validation (sécurité formulaire)
+
+
+
+Fonctionnement du routeur et URLs : 
+L’application est basée sur une architecture MVC personnalisée, combinée à un système de routage maison écrit en PHP.
+
+Toutes les requêtes HTTP sont d’abord gérées par Apache. Grâce au fichier .htaccess, toute URL qui ne correspond pas à un fichier ou dossier réel est automatiquement redirigée vers le point d’entrée unique : index.php.
+
+C’est là qu’intervient le routeur PHP, cœur du système de navigation. Les routes sont définies manuellement (par exemple : /blog, /article/(\d+)) via des méthodes comme get() ou post(), qui les enregistrent dans une structure interne.
+
+La méthode dispatch() du routeur est responsable de l'analyse de chaque requête entrante. Elle :
+
+récupère le chemin demandé (/blog, /article/5, etc.)
+
+nettoie l’URL pour ignorer le chemin de base local (/PHP_BLOG/public)
+
+parcourt les routes enregistrées et utilise des expressions régulières pour détecter une correspondance avec l’URL actuelle
+
+en cas de match, elle extrait automatiquement les éventuels paramètres (ex : ID d’un article)
+
+elle instancie le contrôleur associé et appelle la méthode correspondante, avec les bons paramètres
+
+Le contrôleur prend alors le relais pour exécuter la logique métier, interagir avec la base de données via un modèle, puis transmettre les données à une vue Twig. Twig génère ensuite dynamiquement le HTML affiché dans le navigateur.
+
+Ce système permet une séparation claire des responsabilités, une gestion souple des routes (y compris dynamiques) et une structure proprement scalable.
+

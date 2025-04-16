@@ -1,0 +1,27 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">{{ article.titre }}</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="card-subtitle text-muted mb-3">
+                        Publié le {{ article.date|date('d/m/Y') }} par {{ article.auteur }}
+                    </p>
+                    <div class="card-text">
+                        <p>{{ article.contenu|nl2br }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="{{ base_path }}/blog" class="btn btn-outline-secondary">← Retour aux articles</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

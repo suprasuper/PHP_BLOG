@@ -11,11 +11,17 @@ class HomeController {
         $loader = new FilesystemLoader(__DIR__ . '/../../Views'); // Définit le dossier des templates
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
+        $config = require dirname(__DIR__, 2) . '/config/env.php'; 
 
         // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('home/acceuil.html.twig', [
             'titre' => 'Bienvenue sur mon blog',
+<<<<<<< Updated upstream
             'welcome_message' => 'Bienvenu !',
+=======
+            'base_path' => $config['base_path'],
+            'message' => 'Ceci est ma première page avec Twig !',
+>>>>>>> Stashed changes
             'css_files' => $assets['css'], // Envoie les CSS à Twig
             'js_files' => $assets['js'] // Envoie les JS à Twig
         ]);

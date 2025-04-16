@@ -16,6 +16,7 @@ class Router {
         // Supprimer "/PHP_BLOG/public" pour normaliser l'URL
         $basePath = '/PHP_BLOG/public';
         $path = str_replace($basePath, '', $path);
+<<<<<<< Updated upstream
         // Vérifier si la route existe
         if (isset($this->routes[$method][$path])) {
             $callback = $this->routes[$method][$path];
@@ -30,13 +31,43 @@ class Router {
                 } else {
                     http_response_code(500);
                     echo "Erreur : Contrôleur ou méthode introuvable.";
+=======
+    
+        // Vérifie chaque route définie pour ce type de requête
+        foreach ($this->routes[$method] as $route => $callback) {
+            // Convertit la route en regex
+            $pattern = "#^" . $route . "$#";
+    
+            if (preg_match($pattern, $path, $matches)) {
+                array_shift($matches); // enlève le match complet
+    
+                if (is_callable($callback)) {
+                    call_user_func_array($callback, $matches);
+                } elseif (is_string($callback)) {
+                    [$controller, $method] = explode('@', $callback);
+                    $controller = "Controllers\\" . $controller;
+    
+                    if (class_exists($controller) && method_exists($controller, $method)) {
+                        $instance = new $controller();
+                        call_user_func_array([$instance, $method], $matches);
+                    } else {
+                        http_response_code(500);
+                        echo "Erreur : Contrôleur ou méthode introuvable.";
+                    }
+>>>>>>> Stashed changes
                 }
+                return;
             }
-            return;
         }
+<<<<<<< Updated upstream
+=======
+    
+        // Si aucune route ne correspond
+>>>>>>> Stashed changes
         http_response_code(404);
         echo "Erreur 404 - Page non trouvée";
     }
+    
     
     
 }
