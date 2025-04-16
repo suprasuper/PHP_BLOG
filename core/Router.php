@@ -4,70 +4,56 @@ namespace Core;
 
 class Router {
     private $routes = [];
+
     public function get($path, $callback) {
         $this->routes['GET'][$path] = $callback;
     }
+
     public function post($path, $callback) {
         $this->routes['POST'][$path] = $callback;
     }
+
     public function dispatch() {
         $method = $_SERVER['REQUEST_METHOD'];
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        // Supprimer "/PHP_BLOG/public" pour normaliser l'URL
+
+        // Normalise l'URL en retirant /PHP_BLOG/public
         $basePath = '/PHP_BLOG/public';
         $path = str_replace($basePath, '', $path);
-<<<<<<< Updated upstream
-        // Vérifier si la route existe
-        if (isset($this->routes[$method][$path])) {
-            $callback = $this->routes[$method][$path];
-            if (is_callable($callback)) {
-                call_user_func($callback);
-            } elseif (is_string($callback)) {
-                [$controller, $method] = explode('@', $callback);
-                $controller = "Controllers\\" . $controller;
-                if (class_exists($controller) && method_exists($controller, $method)) {
-                    $instance = new $controller();
-                    $instance->$method();
-                } else {
-                    http_response_code(500);
-                    echo "Erreur : Contrôleur ou méthode introuvable.";
-=======
-    
-        // Vérifie chaque route définie pour ce type de requête
+
+        // Recherche d'une route correspondante
         foreach ($this->routes[$method] as $route => $callback) {
-            // Convertit la route en regex
             $pattern = "#^" . $route . "$#";
-    
+
             if (preg_match($pattern, $path, $matches)) {
-                array_shift($matches); // enlève le match complet
-    
+                array_shift($matches); // Enlève le match complet
+
+                // Si c'est une fonction anonyme
                 if (is_callable($callback)) {
                     call_user_func_array($callback, $matches);
-                } elseif (is_string($callback)) {
-                    [$controller, $method] = explode('@', $callback);
+                    return;
+                }
+
+                // Si c'est un contrôleur@méthode
+                if (is_string($callback)) {
+                    [$controller, $action] = explode('@', $callback);
                     $controller = "Controllers\\" . $controller;
-    
-                    if (class_exists($controller) && method_exists($controller, $method)) {
+
+                    if (class_exists($controller) && method_exists($controller, $action)) {
                         $instance = new $controller();
-                        call_user_func_array([$instance, $method], $matches);
+                        call_user_func_array([$instance, $action], $matches);
+                        return;
                     } else {
                         http_response_code(500);
                         echo "Erreur : Contrôleur ou méthode introuvable.";
+                        return;
                     }
->>>>>>> Stashed changes
                 }
-                return;
             }
         }
-<<<<<<< Updated upstream
-=======
-    
-        // Si aucune route ne correspond
->>>>>>> Stashed changes
+
+        // Aucune route trouvée
         http_response_code(404);
         echo "Erreur 404 - Page non trouvée";
     }
-    
-    
-    
 }
