@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use Models\Comment;
 
 
 use Twig\Environment;
@@ -36,6 +37,7 @@ class BlogController
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php'; 
+        $commentaires = Comment::allForPost($id);
 
         $article = Post::getPost((int) $id);
     
@@ -45,6 +47,8 @@ class BlogController
                 'message' => 'Article introuvable.',
                 'css_files' => $assets['css'],
                 'js_files' => $assets['js'],
+                'commentaires' => $commentaires,
+
             ]);
             return;
         }
@@ -57,5 +61,20 @@ class BlogController
             'js_files' => $assets['js']
         ]);
     }
+
+    public function addComment($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $auteur = $_POST['auteur'] ?? '';
+            $contenu = $_POST['contenu'] ?? '';
+    
+            if (!empty($auteur) && !empty($contenu)) {
+                \Models\Comment::create((int)$id, $auteur, $contenu);
+            }
+        }
+    
+        header("Location: /article/$id");
+        exit;
+    }
+    
     
 }

@@ -16,6 +16,13 @@ $router = new Router();
 $router->get('/', 'HomeController@index');
 $router->get('/blog', 'BlogController@index');
 $router->get('/article/(\d+)', 'BlogController@show');
+$router->get('/login', 'AuthController@login');
+$router->post('/login', 'AuthController@login');
+$router->get('/logout', 'AuthController@logout');
+$router->get('/register', 'AuthController@register');
+$router->post('/register', 'AuthController@register');
+$router->post('/article/(\d+)/comment', 'BlogController@addComment');
+
 
 // Lancer le routeur
 $router->dispatch();
