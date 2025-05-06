@@ -39,4 +39,19 @@ class Post {
 
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
+
+    public static function create(string $titre, string $contenu): bool {
+        $pdo = Database::getPDO();
+    
+        $sql = "INSERT INTO article (titre, contenu, date, auteur)
+                VALUES (:titre, :contenu, NOW(), :auteur)";
+    
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':titre', $titre);
+        $stmt->bindValue(':contenu', $contenu);
+        $stmt->bindValue(':auteur', $auteur);
+    
+        return $stmt->execute();
+    }
+    
 }

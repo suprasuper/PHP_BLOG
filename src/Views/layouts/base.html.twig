@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mon premier blog PHP !{% endblock %}</title>
-    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    {# <link rel="stylesheet" href="/assets/css/tailwind.css"> #}
     {% for css_file in css_files %}
         <link rel="stylesheet" href="{{ css_file }}">
     {% endfor %}
     {% for js_file in js_files %}
-        <script src="{{ js_file }}"></script>
+        {# <script src="{{ js_file }}"></script> #}
     {% endfor %}
 </head>
 <body class="bg-gray-100 text-gray-900">

@@ -14,7 +14,7 @@
                     {% if error %}
                         <div class="alert alert-danger">{{ error }}</div>
                     {% endif %}
-                    <form method="post" action="/register">
+                    <form method="post" action="{{base_path}}/register">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nom</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -37,7 +37,7 @@
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <p>Déjà un compte ? <a href="/login">Connectez-vous ici</a></p>
+                    <p>Déjà un compte ? <a href="{{base_path}}/login">Connectez-vous ici</a></p>
                 </div>
             </div>
         </div>

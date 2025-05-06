@@ -11,10 +11,50 @@ use Models\Post;
 class BlogController 
 
 {
-    
+    //Verif admin
+    private function requireAdmin()
+    {
+        if (empty($_SESSION['user']) || empty($_SESSION['user']['is_admin'])) {
+            header('Location: /login');
+            exit;
+        }
+    }
+
+    //Creer article ( admin )
+    public function create()
+    {
+    $this->requireAdmin(); 
+
+    $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../../src/Views');
+    $twig = new \Twig\Environment($loader);
+    $assets = require dirname(__DIR__, 2) . '/config/assets.php';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $titre = $_POST['titre'] ?? '';
+        $contenu = $_POST['contenu'] ?? '';
+
+        if (!empty($titre) && !empty($contenu)) {
+            \Models\Post::create($titre, $contenu);
+            header('Location: /blog');
+            exit;
+        }
+
+        $error = "Tous les champs sont obligatoires.";
+    }
+
+    echo $twig->render('posts/new.html.twig', [
+        'titre' => 'Créer un article',
+        'css_files' => $assets['css'],
+        'js_files' => $assets['js'],
+        'error' => $error ?? null
+    ]);
+
+    }
+
+    //Tout les articles affichage
     public function index() {
         // Initialisation de Twig
-        $loader = new FilesystemLoader(__DIR__ . '/../../Views'); // Définit le dossier des templates
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views'); // Définit le dossier des templates
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $articles = Post::all();
@@ -29,8 +69,9 @@ class BlogController
         ]);
     }
 
+    //Afficher un seul article
     public function show($id) {
-        $loader = new FilesystemLoader(__DIR__ . '/../../Views');
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php'; 

@@ -8,7 +8,7 @@ use Twig\Loader\FilesystemLoader;
 class HomeController {
     public function index() {
         // Initialisation de Twig
-        $loader = new FilesystemLoader(__DIR__ . '/../../Views'); // Définit le dossier des templates
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views'); // Définit le dossier des templates
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php'; 
