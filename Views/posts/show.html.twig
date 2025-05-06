@@ -55,7 +55,7 @@
                         <div class="alert alert-danger">{{ error }}</div>
                     {% endif %}
 
-                    <form method="post" action="{{ base_path }}/article/{{ article.id }}">
+                    <form method="post" action="{{ base_path }}/article/{{ article.id }}/comment">
                         <div class="mb-3">
                             <label for="auteur" class="form-label">Nom</label>
                             <input type="text" class="form-control" id="auteur" name="auteur" required>

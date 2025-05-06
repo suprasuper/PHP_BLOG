@@ -9,6 +9,7 @@
             "Core\\": "core/",
             "Controllers\\": "src/Controllers/",
             "Models\\": "src/Models/"
+            
         }
     }    
 }

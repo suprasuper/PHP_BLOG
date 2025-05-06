@@ -13,9 +13,6 @@ class BlogController
 {
     
     public function index() {
-
-       
-
         // Initialisation de Twig
         $loader = new FilesystemLoader(__DIR__ . '/../../Views'); // Définit le dossier des templates
         $twig = new Environment($loader);
@@ -47,7 +44,6 @@ class BlogController
                 'message' => 'Article introuvable.',
                 'css_files' => $assets['css'],
                 'js_files' => $assets['js'],
-                'commentaires' => $commentaires,
 
             ]);
             return;
@@ -57,22 +53,26 @@ class BlogController
             'page_title' => $article['titre'],
             'article' => $article,
             'base_path' => $config['base_path'],
+            'commentaires' => $commentaires,
             'css_files' => $assets['css'],
             'js_files' => $assets['js']
         ]);
     }
 
     public function addComment($id) {
+        $config = require dirname(__DIR__, 2) . '/config/env.php'; 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auteur = $_POST['auteur'] ?? '';
             $contenu = $_POST['contenu'] ?? '';
-    
+            
             if (!empty($auteur) && !empty($contenu)) {
                 \Models\Comment::create((int)$id, $auteur, $contenu);
             }
         }
-    
-        header("Location: /article/$id");
+        
+        header("Location: {$config['base_path']}/article/{$id}");
+
+
         exit;
     }
     
