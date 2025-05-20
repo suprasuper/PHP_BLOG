@@ -17,6 +17,7 @@ class HomeController {
         echo $twig->render('home/acceuil.html.twig', [
             'titre' => 'Bienvenue sur mon blog',
             'welcome_message' => 'Bienvenu !',
+            'user' => $_SESSION["user"] ?? null,
             'base_path' => $config['base_path'],
             'message' => 'Ceci est ma première page avec Twig !',
             'css_files' => $assets['css'], // Envoie les CSS à Twig

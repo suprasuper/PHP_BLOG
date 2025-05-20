@@ -10,12 +10,12 @@
                 <li class="nav-item"><a class="nav-link" href="/PHP_BLOG/public/blog">Blog</a></li>
             </ul>
            <ul class="navbar-nav">
-            {# Partie utilisateur connecté (désactivée pour l'instant) #}
-                {# {% if app.user %} #}
+             
+                 {% if (user is defined and user is not null) %} 
                 <li class="nav-item"><a class="nav-link btn btn-danger text-white" style="margin-right: 5px;" href="/PHP_BLOG/public/logout">Déconnexion</a></li>
-                {# {% else %} #}
+                 {% else %} 
                 <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="/PHP_BLOG/public/login">Connexion</a></li>
-                {# {% endif %} #}
+                 {% endif %} 
             </ul>
         </div>
     </div>

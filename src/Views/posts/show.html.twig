@@ -35,6 +35,7 @@
                                 <strong>{{ commentaire.auteur }}</strong>
                                 <small class="text-muted">le {{ commentaire.date|date('d/m/Y à H:i') }}</small>
                                 <p class="mt-1">{{ commentaire.contenu|nl2br }}</p>
+                                <a href="{{base_path}}/article/{{article.id}}/comment/{{commentaire.id}}/delete">Supprimer</a>
                             </div>
                         {% endfor %}
                     {% else %}

@@ -31,6 +31,12 @@
                         </p>
 
                        <a href="/PHP_BLOG/public/article/{{ article.id }}">Lire la suite</a>
+                       {% if (user is defined and user is not null and user["is_admin"] == 1) %} 
+                            <a href="{{base_path}}/article/{{article.id}}/delete"> 
+                                Supprimer
+                            </a>
+                       {% endif %}
+
 
                     </div>
                 </div>

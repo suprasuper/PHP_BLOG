@@ -63,6 +63,7 @@ class BlogController
         // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('posts/blog.html.twig', [
             'titre' => 'Articles',
+            'user' => $_SESSION["user"] ?? null, 
             'articles' => $articles,
             'css_files' => $assets['css'], // Envoie les CSS à Twig
             'js_files' => $assets['js'] // Envoie les JS à Twig
@@ -91,8 +92,8 @@ class BlogController
         }
     
         echo $twig->render('posts/show.html.twig', [
-            'page_title' => $article['titre'],
             'article' => $article,
+            'user' => $_SESSION["user"] ?? null,
             'base_path' => $config['base_path'],
             'commentaires' => $commentaires,
             'css_files' => $assets['css'],

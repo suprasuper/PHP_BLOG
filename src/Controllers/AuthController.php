@@ -29,9 +29,8 @@ class AuthController extends Controller
                     'id' => $user['id'],
                     'email' => $user['email'],
                     'is_admin' => $user['is_admin'],
-                    
                 ];
-                header('Location: /dashboard');
+                header('Location: http://localhost/PHP_BLOG/public/');
                 exit;
             } else {
                 $error = "Email ou mot de passe incorrect.";
@@ -49,9 +48,10 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $config = require dirname(__DIR__, 2) . '/config/env.php';
         unset($_SESSION['user']);
         session_destroy();
-        header('Location: /login');
+        header('Location: '.$config['base_path']);
         exit;
     }
 
@@ -59,7 +59,7 @@ class AuthController extends Controller
 {
     $config = require dirname(__DIR__, 2) . '/config/env.php'; 
     $error = null;
-
+    $assets = require dirname(__DIR__, 2) . '/config/assets.php';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = trim($_POST['name']);
         $email = trim($_POST['email']);
