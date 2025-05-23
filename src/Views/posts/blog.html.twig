@@ -23,7 +23,11 @@
                         <p class="card-subtitle text-muted small mb-2">
                             Publié le {{ article.date|date("d/m/Y") }} par {{ article.auteur }}
                         </p>
-
+                        {% if article.chapo is defined and article.chapo is not empty %}
+                            <p class="text-secondary fst-italic mb-2">
+                                {{ article.chapo }}
+                            </p>
+                        {% endif %}
                         <p class="card-text flex-grow-1">
                             {{ article.contenu|length > 120 
                                 ? article.contenu|slice(0, 120) ~ '...'

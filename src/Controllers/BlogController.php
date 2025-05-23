@@ -30,10 +30,11 @@ class BlogController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $titre = $_POST['titre'] ?? '';
+            $chapo = $_POST['chapo'] ?? '';
             $contenu = $_POST['contenu'] ?? '';
 
-            if (!empty($titre) && !empty($contenu)) {
-                Post::create($titre, $contenu);
+            if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
+                Post::create($titre, $chapo, $contenu);
                 header('Location: /blog');
                 exit;
             }
@@ -50,7 +51,7 @@ class BlogController
 
     }
 
-    //Tout les articles affichage
+    //Afficher tous les articles
     public function index()
     {
         // Initialisation de Twig
@@ -102,50 +103,53 @@ class BlogController
         ]);
     }
 
+    //Modifier un article
     public function updateArticle($id)
-{
-    $this->requireAdmin();
+    {
+        $this->requireAdmin();
 
-    $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
-    $twig = new Environment($loader);
-    $assets = require dirname(__DIR__, 2) . '/config/assets.php';
-    $config = require dirname(__DIR__, 2) . '/config/env.php';
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
+        $twig = new Environment($loader);
+        $assets = require dirname(__DIR__, 2) . '/config/assets.php';
+        $config = require dirname(__DIR__, 2) . '/config/env.php';
 
-    $article = Post::getPost((int)$id);
+        $article = Post::getPost((int) $id);
 
-    if (!$article) {
-        http_response_code(404);
-        echo $twig->render('errors/404.html.twig', [
-            'message' => 'Article introuvable.',
+        if (!$article) {
+            http_response_code(404);
+            echo $twig->render('errors/404.html.twig', [
+                'message' => 'Article introuvable.',
+                'css_files' => $assets['css'],
+                'js_files' => $assets['js'],
+            ]);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $titre = $_POST['titre'] ?? '';
+            $chapo = $_POST['chapo'] ?? '';
+            $contenu = $_POST['contenu'] ?? '';
+
+
+            if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
+                Post::update((int)$id, $titre, $chapo, $contenu);
+                header("Location: {$config['base_path']}/article/{$id}");
+                exit;
+            }
+
+            $error = "Tous les champs sont obligatoires.";
+        }
+
+        echo $twig->render('posts/edit.html.twig', [
+            'article' => $article,
+            'error' => $error ?? null,
             'css_files' => $assets['css'],
             'js_files' => $assets['js'],
         ]);
-        return;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $titre = $_POST['titre'] ?? '';
-        $contenu = $_POST['contenu'] ?? '';
 
-        if (!empty($titre) && !empty($contenu)) {
-            Post::update((int)$id, $titre, $contenu);
-            header("Location: {$config['base_path']}/article/{$id}");
-            exit;
-        }
-
-        $error = "Tous les champs sont obligatoires.";
-    }
-
-    echo $twig->render('posts/edit.html.twig', [
-        'article' => $article,
-        'error' => $error ?? null,
-        'css_files' => $assets['css'],
-        'js_files' => $assets['js'],
-    ]);
-}
-
-    
-
+    //Supprimer un article
     public function delete($id)
     {
         $this->requireAdmin();
@@ -156,7 +160,7 @@ class BlogController
         exit;
     }
 
-
+    //Ajouter un commentaire
     public function addComment($id)
     {
         $config = require dirname(__DIR__, 2) . '/config/env.php';
@@ -175,6 +179,7 @@ class BlogController
         exit;
     }
 
+    //Supprimer un commentaire
     public function deleteComment($articleId, $commentId)
     {
 
@@ -186,7 +191,4 @@ class BlogController
         header("Location: {$config['base_path']}/article/{$articleId}");
         exit;
     }
-
-
-
 }

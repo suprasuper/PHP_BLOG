@@ -13,6 +13,9 @@
                     <p class="card-subtitle text-muted mb-3">
                         Publié le {{ article.date|date('d/m/Y') }} par {{ article.auteur }}
                     </p>
+                    {% if article.chapo %}
+                        <p class="fst-italic text-secondary mb-4">{{ article.chapo }}</p>
+                    {% endif %}
                     <div class="card-text">
                         <p>{{ article.contenu|nl2br }}</p>
                     </div>
