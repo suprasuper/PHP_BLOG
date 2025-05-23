@@ -48,10 +48,32 @@ class Post {
     
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':titre', $titre);
+        $stmt->bindValue(':contenu', $contenu);    
+        return $stmt->execute();
+    }
+
+    public static function update(int $id, string $titre, string $contenu): bool {
+        $pdo = Database::getPDO();
+    
+        $sql = "UPDATE article SET titre = :titre, contenu = :contenu WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':titre', $titre);
         $stmt->bindValue(':contenu', $contenu);
-        $stmt->bindValue(':auteur', $auteur);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
     
         return $stmt->execute();
     }
+    
+
+    public static function delete(int $id): bool {
+        $pdo = Database::getPDO();
+    
+        $sql = "DELETE FROM article WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+    
+        return $stmt->execute();
+    }
+    
     
 }

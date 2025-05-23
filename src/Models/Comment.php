@@ -27,4 +27,15 @@ class Comment {
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public static function delete(int $id): bool {
+        $pdo = Database::getPDO();
+    
+        $sql = "DELETE FROM commentaire WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+    
+        return $stmt->execute();
+    }
+    
 }

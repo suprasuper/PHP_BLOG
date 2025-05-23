@@ -22,7 +22,14 @@
             <div class="text-center mb-4">
                 <a href="{{ base_path }}/blog" class="btn btn-outline-secondary">← Retour aux articles</a>
             </div>
-
+            {# Supprimer l'article #}
+            {% if user and user.is_admin %}
+                <div class="text-center mb-4">
+                    <form method="POST" action="{{ base_path }}/article/{{ article.id }}/delete">
+                        <button type="submit" class="btn btn-danger">🗑 Supprimer cet article</button>
+                    </form>
+                </div>
+            {% endif %}
             {# Section des commentaires #}
             <div class="card shadow-sm mb-4">
                 <div class="card-header">
@@ -35,7 +42,14 @@
                                 <strong>{{ commentaire.auteur }}</strong>
                                 <small class="text-muted">le {{ commentaire.date|date('d/m/Y à H:i') }}</small>
                                 <p class="mt-1">{{ commentaire.contenu|nl2br }}</p>
-                                <a href="{{base_path}}/article/{{article.id}}/comment/{{commentaire.id}}/delete">Supprimer</a>
+                                <form method="POST" action="{{ base_path }}/article/{{ article.id }}/comment/{{ commentaire.id }}/delete" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                </form>
+                                {% if user and user.is_admin %}
+                                    <form method="get" action="{{ base_path }}/article/{{ article.id }}/update" class="d-inline">
+                                        <button type="submit" class="btn btn-warning me-2">Modifier</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     {% else %}
