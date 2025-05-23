@@ -17,6 +17,7 @@ $router = new Router();
 
 // Ajouter la route pour la page d'accueil
 $router->get('/', 'HomeController@index');
+$router->post('/', 'HomeController@index'); // envoyer form contact 
 $router->get('/blog', 'BlogController@index');
 $router->get('/article/(\d+)', 'BlogController@show');
 $router->get('/article/(\d+)/delete', 'BlogController@deleteArticle');
