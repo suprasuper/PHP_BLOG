@@ -4,14 +4,15 @@ namespace Controllers;
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class HomeController {
     public function index() {
-        // Initialisation de Twig
-        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views'); // Dossier des templates
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
-        $config = require dirname(__DIR__, 2) . '/config/env.php'; 
+        $config = require dirname(__DIR__, 2) . '/config/env.php';
 
         $messageEnvoye = false;
         $erreur = null;
@@ -21,20 +22,39 @@ class HomeController {
             $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
             $message = htmlspecialchars($_POST['message'] ?? '');
 
-            $to = "thibaudiut@gmail.fr";
-            $subject = "Nouveau message depuis le site";
-            $body = "Nom: $nom\nEmail: $email\n\nMessage:\n$message";
-            $headers = "From: $email\r\nReply-To: $email\r\n";
+            $mail = new PHPMailer(true);
 
-            if (mail($to, $subject, $body, $headers)) {
+            try {
+                //Configuration SMTP Gmail
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'thibaudiut@gmail.com';           
+                $mail->Password   = 'xvqa fhju tllf dsqk'; 
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                $mail->setFrom('thibaudiut@gmail.com', 'PHP_BLOG');
+                $mail->addAddress('thibaudiut@gmail.com');
+
+                $mail->addReplyTo($email, $nom);
+
+                $mail->isHTML(false);
+                $mail->Subject = 'Nouveau message depuis le site';
+                $mail->Body    = "Nom: $nom\nEmail: $email\n\nMessage:\n$message";
+
+                $mail->send();
                 $messageEnvoye = true;
-            } else {
-                $erreur = "Erreur lors de l'envoi de l'e-mail.";
+            } catch (Exception $e) {
+                $erreur = "Erreur lors de l'envoi de l'e-mail : {$mail->ErrorInfo}";
             }
         }
 
-        echo $twig->render('home/acceuil.html.twig', [
+       echo $twig->render('home/acceuil.html.twig', [
             'titre' => 'Bienvenue sur mon blog',
+            'page_title' => 'Accueil',
+            'nom' => 'Thibaud',
+            'prenom' => 'Dalbera',
             'welcome_message' => 'Bienvenu !',
             'user' => $_SESSION["user"] ?? null,
             'base_path' => $config['base_path'],
@@ -43,5 +63,6 @@ class HomeController {
             'messageEnvoye' => $messageEnvoye,
             'erreur' => $erreur
         ]);
+
     }
 }
