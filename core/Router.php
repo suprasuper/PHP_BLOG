@@ -2,39 +2,60 @@
 
 namespace Core;
 
-class Router {
+class Router
+{
     private $routes = [];
 
-    public function get($path, $callback) {
+    public function get($path, $callback)
+    {
         $this->routes['GET'][$path] = $callback;
     }
 
-    public function post($path, $callback) {
+    public function post($path, $callback)
+    {
         $this->routes['POST'][$path] = $callback;
     }
 
-    public function dispatch() {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    public function dispatch()
+    {
+        // Méthode HTTP - Validation
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+        if (!in_array($method, $allowedMethods)) {
+            http_response_code(405); // Method Not Allowed
+            echo "Méthode HTTP non autorisée.";
+            return;
+        }
 
-        // Normalise l'URL en retirant /PHP_BLOG/public
+        // URI - Sanitation
+        $rawUri = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $path = parse_url($rawUri, PHP_URL_PATH);
+        $path = filter_var($path, FILTER_SANITIZE_URL);
+
+        // Normalise l'URL en retirant le préfixe du projet
         $basePath = '/PHP_BLOG/public';
         $path = str_replace($basePath, '', $path);
 
         // Recherche d'une route correspondante
+        if (!isset($this->routes[$method])) {
+            http_response_code(404);
+            echo "Erreur 404 - Méthode non supportée.";
+            return;
+        }
+
         foreach ($this->routes[$method] as $route => $callback) {
             $pattern = "#^" . $route . "$#";
 
             if (preg_match($pattern, $path, $matches)) {
-                array_shift($matches); // Enlève le match complet
+                array_shift($matches); // Retire le match complet
 
-                // Si c'est une fonction anonyme
+                // Fonction anonyme
                 if (is_callable($callback)) {
                     call_user_func_array($callback, $matches);
                     return;
                 }
 
-                // Si c'est un contrôleur@méthode
+                // Contrôleur@Méthode
                 if (is_string($callback)) {
                     [$controller, $action] = explode('@', $callback);
                     $controller = "Controllers\\" . $controller;
@@ -42,7 +63,7 @@ class Router {
                     if (class_exists($controller) && method_exists($controller, $action)) {
                         $instance = new $controller();
                         call_user_func_array([$instance, $action], $matches);
-                        return; 
+                        return;
                     } else {
                         http_response_code(500);
                         echo "Erreur : Contrôleur ou méthode introuvable.";
@@ -54,6 +75,7 @@ class Router {
 
         // Aucune route trouvée
         http_response_code(404);
-        echo "Erreur 404 - Page non trouvée";
+        echo "Erreur 404 - Page non trouvée.";
     }
+
 }
