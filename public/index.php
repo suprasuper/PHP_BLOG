@@ -24,6 +24,8 @@ $router->get('/article/(\d+)/delete', 'BlogController@deleteArticle');
 $router->get('/article/(\d+)/update', 'BlogController@updateArticle');
 $router->post('/article/(\d+)/update', 'BlogController@updateArticle');
 $router->post('/article/(\d+)/comment', 'BlogController@addComment');
+$router->get('/article/(\d+)/comment/(\d+)/edit', 'BlogController@editComment');
+$router->post('/article/(\d+)/comment/(\d+)/edit', 'BlogController@editComment');
 $router->post('/article/(\d+)/delete', 'BlogController@delete');
 $router->post('/article/(\d+)/comment/(\d+)/delete', 'BlogController@deleteComment');
 $router->get('/login', 'AuthController@login');

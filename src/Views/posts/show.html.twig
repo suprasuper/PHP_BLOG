@@ -51,7 +51,7 @@
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                                 </form>
                                 {% if user and user.is_admin %}
-                                    <form method="get" action="{{ base_path }}/article/{{ article.id }}/update" class="d-inline">
+                                    <form method="get" action="{{ base_path }}/article/{{ article.id }}/comment/{{ commentaire.id }}/edit" class="d-inline">
                                         <button type="submit" class="btn btn-warning me-2">Modifier</button>
                                     </form>
                                 {% endif %}

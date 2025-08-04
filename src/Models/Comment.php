@@ -37,5 +37,29 @@ class Comment {
     
         return $stmt->execute();
     }
-    
+
+    // Nouvelle méthode : récupérer un commentaire par son ID
+    public static function getById(int $id): ?array {
+        $pdo = Database::getPDO();
+
+        $sql = "SELECT * FROM commentaire WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $comment = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $comment ?: null; // Retourne null si non trouvé
+    }
+
+    // Nouvelle méthode : mettre à jour le contenu d'un commentaire
+    public static function update(int $id, string $contenu): bool {
+        $pdo = Database::getPDO();
+
+        $sql = "UPDATE commentaire SET contenu = :contenu WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':contenu' => $contenu,
+            ':id' => $id
+        ]);
+    }
 }

@@ -181,6 +181,50 @@ class BlogController
         exit;
     }
 
+    public function editComment($articleId, $commentId)
+    {
+        $this->requireAdmin();
+
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
+        $twig = new Environment($loader);
+        $assets = require dirname(__DIR__, 2) . '/config/assets.php';
+        $config = require dirname(__DIR__, 2) . '/config/env.php';
+
+        $comment = Comment::getById((int) $commentId);
+
+        if (!$comment) {
+            http_response_code(404);
+            echo $twig->render('errors/404.html.twig', [
+                'message' => 'Commentaire introuvable.',
+                'css_files' => $assets['css'],
+                'js_files' => $assets['js'],
+            ]);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $contenu = $_POST['contenu'] ?? '';
+
+            if (!empty($contenu)) {
+                Comment::update((int) $commentId, $contenu);
+                header("Location: {$config['base_path']}/article/{$articleId}");
+                exit;
+            } else {
+                $error = "Le contenu ne peut pas être vide.";
+            }
+        }
+
+        echo $twig->render('posts/comment-edit.html.twig', [
+            'comment' => $comment,
+            'articleId' => $articleId,
+            'base_path' => $config['base_path'],
+            'error' => $error ?? null,
+            'css_files' => $assets['css'],
+            'js_files' => $assets['js'],
+        ]);
+    }
+
+
     //Supprimer un commentaire
     public function deleteComment($articleId, $commentId)
     {
