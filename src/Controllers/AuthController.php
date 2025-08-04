@@ -4,8 +4,6 @@ namespace Controllers;
 
 use Core\Controller;
 use Models\User;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class AuthController extends Controller
 {
@@ -18,9 +16,8 @@ class AuthController extends Controller
         $email = '';
         $password = '';
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         if ($method === 'POST') {
-
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL) ?? '';
             $password = $_POST['password'] ?? '';
 
@@ -40,8 +37,8 @@ class AuthController extends Controller
         }
 
         $this->render('connexion/login.html.twig', [
-            'base_path' => htmlspecialchars($config['base_path']),
-            'email' => htmlspecialchars($email),
+            'base_path' => $config['base_path'],
+            'email' => $email,
             'password' => '', 
             'error' => $error,
             'css_files' => $assets['css'],
@@ -54,7 +51,7 @@ class AuthController extends Controller
         $config = require dirname(__DIR__, 2) . '/config/env.php';
         unset($_SESSION['user']);
         session_destroy();
-        header('Location: ' . htmlspecialchars($config['base_path']));
+        header('Location: ' . $config['base_path']);
         exit;
     }
 
@@ -64,7 +61,7 @@ class AuthController extends Controller
         $error = null;
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'POST') {
             $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
@@ -74,27 +71,24 @@ class AuthController extends Controller
 
             if ($password !== $confirmPassword) {
                 $error = "Les mots de passe ne correspondent pas.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = "Adresse email invalide.";
+            } elseif (empty($name) || empty($password)) {
+                $error = "Tous les champs sont obligatoires.";
             } else {
-
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $error = "Adresse email invalide.";
-                } elseif (empty($name) || empty($password)) {
-                    $error = "Tous les champs sont obligatoires.";
+                $result = User::create($email, $password, $name);
+                if ($result) {
+                    header('Location: /PHP_BLOG/public/login');
+                    exit;
                 } else {
-                    $result = User::create($email, $password, $name);
-                    if ($result) {
-                        header('Location: /PHP_BLOG/public/login');
-                        exit;
-                    } else {
-                        $error = "Erreur lors de la création du compte.";
-                    }
+                    $error = "Erreur lors de la création du compte.";
                 }
             }
         }
 
         $this->render('connexion/register.html.twig', [
             'error' => $error,
-            'base_path' => htmlspecialchars($config['base_path']),
+            'base_path' => $config['base_path'],
             'css_files' => $assets['css'],
             'js_files' => $assets['js']
         ]);

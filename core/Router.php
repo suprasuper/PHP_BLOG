@@ -18,7 +18,7 @@ class Router
 
     public function dispatch()
     {
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
         if (!in_array($method, $allowedMethods)) {
             http_response_code(405); // Method Not Allowed
@@ -26,7 +26,7 @@ class Router
             return;
         }
 
-        $rawUri = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
+        $rawUri = $_SERVER['REQUEST_URI'] ?? '/';
         $path = parse_url($rawUri, PHP_URL_PATH);
         $path = filter_var($path, FILTER_SANITIZE_URL);
 
@@ -74,5 +74,4 @@ class Router
         http_response_code(404);
         echo "Erreur 404 - Page non trouvée.";
     }
-
 }

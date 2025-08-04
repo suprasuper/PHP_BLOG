@@ -17,9 +17,8 @@ class HomeController {
         $messageEnvoye = false;
         $erreur = null;
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         if ($method === 'POST') {
-            
             $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_FULL_SPECIAL_CHARS);

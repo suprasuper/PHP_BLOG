@@ -9,7 +9,6 @@ use Twig\Loader\FilesystemLoader;
 
 class BlogController
 {
-    // Vérifie si l'utilisateur est admin
     private function requireAdmin()
     {
         $user = $_SESSION['user'] ?? null;
@@ -21,7 +20,6 @@ class BlogController
         }
     }
 
-    // Créer un article (admin)
     public function create()
     {
         $this->requireAdmin();
@@ -30,7 +28,7 @@ class BlogController
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'POST') {
             $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
@@ -55,7 +53,6 @@ class BlogController
         ]);
     }
 
-    // Afficher tous les articles
     public function index()
     {
         $config = require dirname(__DIR__, 2) . '/config/env.php';
@@ -73,7 +70,6 @@ class BlogController
         ]);
     }
 
-    // Afficher un seul article
     public function show($id)
     {
         $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
@@ -104,7 +100,6 @@ class BlogController
         ]);
     }
 
-    // Modifier un article
     public function updateArticle($id)
     {
         $this->requireAdmin();
@@ -127,7 +122,7 @@ class BlogController
             return;
         }
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'POST') {
             $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
@@ -152,7 +147,6 @@ class BlogController
         ]);
     }
 
-    // Supprimer un article
     public function delete($id)
     {
         $this->requireAdmin();
@@ -166,13 +160,12 @@ class BlogController
         exit;
     }
 
-    // Ajouter un commentaire
     public function addComment($id)
     {
         $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $config = require dirname(__DIR__, 2) . '/config/env.php';
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'POST') {
             $auteur = filter_input(INPUT_POST, 'auteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
@@ -211,7 +204,7 @@ class BlogController
             return;
         }
 
-        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'POST') {
             $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
@@ -235,7 +228,6 @@ class BlogController
         ]);
     }
 
-    // Supprimer un commentaire
     public function deleteComment($articleId, $commentId)
     {
         $this->requireAdmin();
