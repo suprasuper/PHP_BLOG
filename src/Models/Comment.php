@@ -38,7 +38,7 @@ class Comment {
         return $stmt->execute();
     }
 
-    // Nouvelle méthode : récupérer un commentaire par son ID
+    //récupérer un commentaire par son ID
     public static function getById(int $id): ?array {
         $pdo = Database::getPDO();
 
@@ -50,7 +50,7 @@ class Comment {
         return $comment ?: null; // Retourne null si non trouvé
     }
 
-    // Nouvelle méthode : mettre à jour le contenu d'un commentaire
+    //mettre à jour le contenu d'un commentaire
     public static function update(int $id, string $contenu): bool {
         $pdo = Database::getPDO();
 

@@ -15,7 +15,6 @@ ErrorHandler::register();
 //Initialise router
 $router = new Router();
 
-// Ajouter la route pour la page d'accueil
 $router->get('/', 'HomeController@index');
 $router->post('/', 'HomeController@index'); // envoyer form contact 
 $router->get('/blog', 'BlogController@index');
@@ -33,9 +32,6 @@ $router->post('/login', 'AuthController@login');
 $router->get('/logout', 'AuthController@logout');
 $router->get('/register', 'AuthController@register');
 $router->post('/register', 'AuthController@register');
-
-
-
 
 
 
