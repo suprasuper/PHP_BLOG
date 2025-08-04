@@ -44,7 +44,7 @@ class Post
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public static function create(string $titre, string $chapo, string $contenu): bool
+    public static function create(string $titre, string $chapo, string $contenu, string $auteur): bool
     {
         $pdo = Database::getPDO();
 
@@ -55,7 +55,6 @@ class Post
         $stmt->bindValue(':titre', $titre);
         $stmt->bindValue(':chapo', $chapo);
         $stmt->bindValue(':contenu', $contenu);
-        $stmt->bindValue(':auteur', $_SESSION['user']['username'] ?? 'anonyme');
 
         return $stmt->execute();
     }

@@ -5,13 +5,13 @@
 {% block content %}
 <div class="container py-5">
     <h1 class="mb-4 text-center">{{ page_title }}</h1>
-    {% if app.session.user is defined and app.session.user.is_admin %}
-    <div class="mb-4 text-end">
-        <a href="/PHP_BLOG/public/blog/create" class="btn btn-primary">
-            Nouvel article
-        </a>
-    </div>
-{% endif %}
+    {% if user is defined and user.is_admin %}
+        <div class="mb-4 text-end">
+            <a href="/PHP_BLOG/public/blog/create" class="btn btn-primary">
+                Nouvel article
+            </a>
+        </div>
+    {% endif %}
 
     <div class="row g-4">
         {% for article in articles %}

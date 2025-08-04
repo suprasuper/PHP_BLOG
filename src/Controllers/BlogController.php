@@ -34,14 +34,14 @@ class BlogController
             $contenu = $_POST['contenu'] ?? '';
 
             if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
-                Post::create($titre, $chapo, $contenu);
+                $auteur = $_SESSION['user']['username'] ?? 'anonyme';
+                Post::create($titre, $chapo, $contenu, $auteur);
                 header('Location: /blog');
                 exit;
             }
 
             $error = "Tous les champs sont obligatoires.";
         }
-
         echo $twig->render('posts/new.html.twig', [
             'titre' => 'Créer un article',
             'css_files' => $assets['css'],
@@ -55,6 +55,7 @@ class BlogController
     public function index()
     {
         // Initialisation de Twig
+        $config = require dirname(__DIR__, 2) . '/config/env.php';
         $loader = new FilesystemLoader(__DIR__ . '/../../src/Views'); // Définit le dossier des templates
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
@@ -63,11 +64,11 @@ class BlogController
 
         // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('posts/blog.html.twig', [
-            'titre' => 'Articles',
-            'user' => $_SESSION["user"] ?? null,
             'articles' => $articles,
-            'css_files' => $assets['css'], // Envoie les CSS à Twig
-            'js_files' => $assets['js'] // Envoie les JS à Twig
+            'error' => $error ?? null,
+            'css_files' => $assets['css'],
+            'js_files' => $assets['js'],
+            'base_path' => $config['base_path'], // <= ajoute cette ligne
         ]);
     }
 
@@ -132,7 +133,7 @@ class BlogController
 
 
             if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
-                Post::update((int)$id, $titre, $chapo, $contenu);
+                Post::update((int) $id, $titre, $chapo, $contenu);
                 header("Location: {$config['base_path']}/article/{$id}");
                 exit;
             }
@@ -144,6 +145,7 @@ class BlogController
             'article' => $article,
             'error' => $error ?? null,
             'css_files' => $assets['css'],
+            'base_path' => $config['base_path'],
             'js_files' => $assets['js'],
         ]);
     }

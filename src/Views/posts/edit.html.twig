@@ -11,17 +11,26 @@
             {% if error %}
                 <div class="alert alert-danger">{{ error }}</div>
             {% endif %}
+
             <form method="post" action="{{ base_path }}/article/{{ article.id }}/update">
                 <div class="mb-3">
                     <label for="titre" class="form-label">Titre</label>
-                    <input type="text" class="form-control" id="titre" name="titre" value="{{ article.titre }}" required>
+                    <input type="text" id="titre" name="titre" class="form-control" value="{{ article.titre }}" required>
                 </div>
+
+                <div class="mb-3">
+                    <label for="chapo" class="form-label">Chapo</label>
+                    <input type="text" id="chapo" name="chapo" class="form-control" value="{{ article.chapo }}" required>
+                </div>
+
                 <div class="mb-3">
                     <label for="contenu" class="form-label">Contenu</label>
-                    <textarea class="form-control" id="contenu" name="contenu" rows="6" required>{{ article.contenu }}</textarea>
+                    <textarea id="contenu" name="contenu" class="form-control" rows="10" required>{{ article.contenu }}</textarea>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ base_path }}/article/{{ article.id }}" class="btn btn-outline-secondary">← Retour</a>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
         </div>

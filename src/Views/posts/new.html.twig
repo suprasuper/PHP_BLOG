@@ -1,0 +1,35 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Créer un article{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Créer un nouvel article</h1>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form action="/PHP_BLOG/public/blog/create" method="POST">
+        <div class="mb-3">
+            <label for="titre" class="form-label">Titre</label>
+            <input type="text" class="form-control" id="titre" name="titre" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="chapo" class="form-label">Chapo</label>
+            <textarea class="form-control" id="chapo" name="chapo" rows="2" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="contenu" class="form-label">Contenu</label>
+            <textarea class="form-control" id="contenu" name="contenu" rows="8" required></textarea>
+        </div>
+
+        <div class="text-end">
+            <a href="/PHP_BLOG/public/blog" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Créer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

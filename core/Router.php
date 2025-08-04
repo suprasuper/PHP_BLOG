@@ -42,7 +42,7 @@ class Router {
                     if (class_exists($controller) && method_exists($controller, $action)) {
                         $instance = new $controller();
                         call_user_func_array([$instance, $action], $matches);
-                        return;
+                        return; 
                     } else {
                         http_response_code(500);
                         echo "Erreur : Contrôleur ou méthode introuvable.";
