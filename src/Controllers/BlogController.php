@@ -1,25 +1,27 @@
 <?php
 
 namespace Controllers;
+
 use Models\Comment;
-
-
+use Models\Post;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Models\Post;
 
 class BlogController
 {
-    //Verif admin
+    // Vérifie si l'utilisateur est admin
     private function requireAdmin()
     {
-        if (empty($_SESSION['user']) || empty($_SESSION['user']['is_admin'])) {
+        $user = $_SESSION['user'] ?? null;
+        $isAdmin = $user['is_admin'] ?? false;
+
+        if (!$user || !$isAdmin) {
             header('Location: /login');
             exit;
         }
     }
 
-    //Creer article ( admin )
+    // Créer un article (admin)
     public function create()
     {
         $this->requireAdmin();
@@ -30,14 +32,13 @@ class BlogController
 
         $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 
-
         if ($method === 'POST') {
-            $titre = $_POST['titre'] ?? '';
-            $chapo = $_POST['chapo'] ?? '';
-            $contenu = $_POST['contenu'] ?? '';
+            $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+            $chapo = filter_input(INPUT_POST, 'chapo', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+            $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 
             if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
-                $auteur = $_SESSION['user']['username'] ?? 'anonyme';
+                $auteur = htmlspecialchars($_SESSION['user']['username'] ?? 'anonyme');
                 Post::create($titre, $chapo, $contenu, $auteur);
                 header('Location: /blog');
                 exit;
@@ -45,46 +46,43 @@ class BlogController
 
             $error = "Tous les champs sont obligatoires.";
         }
+
         echo $twig->render('posts/new.html.twig', [
             'titre' => 'Créer un article',
             'css_files' => $assets['css'],
             'js_files' => $assets['js'],
             'error' => $error ?? null
         ]);
-
     }
 
-    //Afficher tous les articles
+    // Afficher tous les articles
     public function index()
     {
-        // Initialisation de Twig
         $config = require dirname(__DIR__, 2) . '/config/env.php';
-        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views'); // Définit le dossier des templates
+        $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $articles = Post::all();
 
-
-        // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('posts/blog.html.twig', [
             'articles' => $articles,
             'error' => $error ?? null,
             'css_files' => $assets['css'],
             'js_files' => $assets['js'],
-            'base_path' => $config['base_path'], // <= ajoute cette ligne
+            'base_path' => $config['base_path'],
         ]);
     }
 
-    //Afficher un seul article
+    // Afficher un seul article
     public function show($id)
     {
+        $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php';
         $commentaires = Comment::allForPost($id);
-
-        $article = Post::getPost((int) $id);
+        $article = Post::getPost($id);
 
         if (!$article) {
             http_response_code(404);
@@ -92,14 +90,13 @@ class BlogController
                 'message' => 'Article introuvable.',
                 'css_files' => $assets['css'],
                 'js_files' => $assets['js'],
-
             ]);
             return;
         }
 
         echo $twig->render('posts/show.html.twig', [
             'article' => $article,
-            'user' => $_SESSION["user"] ?? null,
+            'user' => $_SESSION['user'] ?? null,
             'base_path' => $config['base_path'],
             'commentaires' => $commentaires,
             'css_files' => $assets['css'],
@@ -107,17 +104,18 @@ class BlogController
         ]);
     }
 
-    //Modifier un article
+    // Modifier un article
     public function updateArticle($id)
     {
         $this->requireAdmin();
 
+        $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php';
 
-        $article = Post::getPost((int) $id);
+        $article = Post::getPost($id);
 
         if (!$article) {
             http_response_code(404);
@@ -129,14 +127,15 @@ class BlogController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titre = $_POST['titre'] ?? '';
-            $chapo = $_POST['chapo'] ?? '';
-            $contenu = $_POST['contenu'] ?? '';
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 
+        if ($method === 'POST') {
+            $titre = filter_input(INPUT_POST, 'titre', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+            $chapo = filter_input(INPUT_POST, 'chapo', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+            $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 
             if (!empty($titre) && !empty($chapo) && !empty($contenu)) {
-                Post::update((int) $id, $titre, $chapo, $contenu);
+                Post::update($id, $titre, $chapo, $contenu);
                 header("Location: {$config['base_path']}/article/{$id}");
                 exit;
             }
@@ -153,34 +152,38 @@ class BlogController
         ]);
     }
 
-
-    //Supprimer un article
+    // Supprimer un article
     public function delete($id)
     {
         $this->requireAdmin();
-        if (is_numeric($id)) {
-            Post::delete((int) $id);
+        $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+
+        if ($id > 0) {
+            Post::delete($id);
         }
+
         header('Location: /blog');
         exit;
     }
 
-    //Ajouter un commentaire
+    // Ajouter un commentaire
     public function addComment($id)
     {
+        $id = (int) filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $config = require dirname(__DIR__, 2) . '/config/env.php';
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $auteur = $_POST['auteur'] ?? '';
-            $contenu = $_POST['contenu'] ?? '';
+
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+
+        if ($method === 'POST') {
+            $auteur = filter_input(INPUT_POST, 'auteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+            $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 
             if (!empty($auteur) && !empty($contenu)) {
-                Comment::create((int) $id, $auteur, $contenu);
+                Comment::create($id, $auteur, $contenu);
             }
         }
 
         header("Location: {$config['base_path']}/article/{$id}");
-
-
         exit;
     }
 
@@ -188,12 +191,15 @@ class BlogController
     {
         $this->requireAdmin();
 
+        $articleId = (int) filter_var($articleId, FILTER_SANITIZE_NUMBER_INT);
+        $commentId = (int) filter_var($commentId, FILTER_SANITIZE_NUMBER_INT);
+
         $loader = new FilesystemLoader(__DIR__ . '/../../src/Views');
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
         $config = require dirname(__DIR__, 2) . '/config/env.php';
 
-        $comment = Comment::getById((int) $commentId);
+        $comment = Comment::getById($commentId);
 
         if (!$comment) {
             http_response_code(404);
@@ -205,11 +211,13 @@ class BlogController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $contenu = $_POST['contenu'] ?? '';
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+
+        if ($method === 'POST') {
+            $contenu = filter_input(INPUT_POST, 'contenu', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 
             if (!empty($contenu)) {
-                Comment::update((int) $commentId, $contenu);
+                Comment::update($commentId, $contenu);
                 header("Location: {$config['base_path']}/article/{$articleId}");
                 exit;
             } else {
@@ -227,14 +235,14 @@ class BlogController
         ]);
     }
 
-
-    //Supprimer un commentaire
+    // Supprimer un commentaire
     public function deleteComment($articleId, $commentId)
     {
-
         $this->requireAdmin();
+        $commentId = (int) filter_var($commentId, FILTER_SANITIZE_NUMBER_INT);
+        $articleId = (int) filter_var($articleId, FILTER_SANITIZE_NUMBER_INT);
 
-        Comment::delete((int) $commentId);
+        Comment::delete($commentId);
 
         $config = require dirname(__DIR__, 2) . '/config/env.php';
         header("Location: {$config['base_path']}/article/{$articleId}");
