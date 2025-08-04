@@ -18,7 +18,6 @@ class Router
 
     public function dispatch()
     {
-        // Méthode HTTP - Validation
         $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
         $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
         if (!in_array($method, $allowedMethods)) {
@@ -27,12 +26,10 @@ class Router
             return;
         }
 
-        // URI - Sanitation
         $rawUri = filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         $path = parse_url($rawUri, PHP_URL_PATH);
         $path = filter_var($path, FILTER_SANITIZE_URL);
 
-        // Normalise l'URL en retirant le préfixe du projet
         $basePath = '/PHP_BLOG/public';
         $path = str_replace($basePath, '', $path);
 
