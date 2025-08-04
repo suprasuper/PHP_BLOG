@@ -1,7 +1,28 @@
-Dependences : 
+Libraries : 
 - Bootstrap
 - Twig 
 - Respect/Validation (sécurité formulaire)
+- PHP Mailer 
+
+
+
+
+
+Installation du projet : 
+Telecharge le projet
+A la racine du projet : composer install 
+Lance wamp et va sur localhost/PHP_BLOG/public  (j'ai un htacces dans le projet)
+La base de donnée va poser problème, comme on ne me demande pas d'export
+
+
+
+
+
+
+
+
+
+
 
 
 
