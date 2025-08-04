@@ -28,7 +28,10 @@ class BlogController
         $twig = new Environment($loader);
         $assets = require dirname(__DIR__, 2) . '/config/assets.php';
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+
+
+        if ($method === 'POST') {
             $titre = $_POST['titre'] ?? '';
             $chapo = $_POST['chapo'] ?? '';
             $contenu = $_POST['contenu'] ?? '';
