@@ -17,52 +17,56 @@ class HomeController {
         $messageEnvoye = false;
         $erreur = null;
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nom = htmlspecialchars($_POST['nom'] ?? '');
-            $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-            $message = htmlspecialchars($_POST['message'] ?? '');
+        $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+        if ($method === 'POST') {
+            
+            $nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-            $mail = new PHPMailer(true);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $erreur = "Adresse email invalide.";
+            } else {
+                $mail = new PHPMailer(true);
 
-            try {
-                //Configuration SMTP Gmail
-                $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
-                $mail->SMTPAuth   = true;
-                $mail->Username   = 'thibaudiut@gmail.com';           
-                $mail->Password   = 'xvqa fhju tllf dsqk'; 
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = 587;
+                try {
+                    // Configuration SMTP Gmail
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = 'thibaudiut@gmail.com';           
+                    $mail->Password   = 'xvqa fhju tllf dsqk'; 
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port       = 587;
 
-                $mail->setFrom('thibaudiut@gmail.com', 'PHP_BLOG');
-                $mail->addAddress('thibaudiut@gmail.com');
+                    $mail->setFrom('thibaudiut@gmail.com', 'PHP_BLOG');
+                    $mail->addAddress('thibaudiut@gmail.com');
+                    $mail->addReplyTo($email, $nom);
 
-                $mail->addReplyTo($email, $nom);
+                    $mail->isHTML(false);
+                    $mail->Subject = 'Nouveau message depuis le site';
+                    $mail->Body    = "Nom: $nom\nEmail: $email\n\nMessage:\n$message";
 
-                $mail->isHTML(false);
-                $mail->Subject = 'Nouveau message depuis le site';
-                $mail->Body    = "Nom: $nom\nEmail: $email\n\nMessage:\n$message";
-
-                $mail->send();
-                $messageEnvoye = true;
-            } catch (Exception $e) {
-                $erreur = "Erreur lors de l'envoi de l'e-mail : {$mail->ErrorInfo}";
+                    $mail->send();
+                    $messageEnvoye = true;
+                } catch (Exception $e) {
+                    $erreur = "Erreur lors de l'envoi de l'e-mail : {$mail->ErrorInfo}";
+                }
             }
         }
 
-       echo $twig->render('home/acceuil.html.twig', [
+        echo $twig->render('home/acceuil.html.twig', [
             'titre' => 'Bienvenue sur mon blog',
             'page_title' => 'Accueil',
             'nom' => 'Thibaud',
             'prenom' => 'Dalbera',
             'welcome_message' => 'Bienvenu !',
-            'user' => $_SESSION["user"] ?? null,
-            'base_path' => $config['base_path'],
+            'user' => $_SESSION['user'] ?? null,
+            'base_path' => htmlspecialchars($config['base_path']),
             'css_files' => $assets['css'],
             'js_files' => $assets['js'],
             'messageEnvoye' => $messageEnvoye,
             'erreur' => $erreur
         ]);
-
     }
 }
