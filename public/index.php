@@ -18,6 +18,8 @@ $router = new Router();
 $router->get('/', 'HomeController@index');
 $router->post('/', 'HomeController@index'); // envoyer form contact 
 $router->get('/blog', 'BlogController@index');
+$router->get('/blog/create', 'BlogController@create');   
+$router->post('/blog/create', 'BlogController@create');  
 $router->get('/article/(\d+)', 'BlogController@show');
 $router->get('/article/(\d+)/delete', 'BlogController@deleteArticle');
 $router->get('/article/(\d+)/update', 'BlogController@updateArticle');
