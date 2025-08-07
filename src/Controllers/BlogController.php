@@ -65,6 +65,7 @@ class BlogController
         // Rendu du template "home/acceuil.html.twig"
         echo $twig->render('posts/blog.html.twig', [
             'articles' => $articles,
+            'user' => $_SESSION['user'] ?? null,
             'error' => $error ?? null,
             'css_files' => $assets['css'],
             'js_files' => $assets['js'],
